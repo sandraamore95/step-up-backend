@@ -4,13 +4,13 @@
   "description": "backend ",
   "main": "index.js",
   "engines": {
-    "node": "20.x"
+    "node": "21.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "build": "npm install --production",
-    "start" :"node index.js"
+    "build": "echo \"No build script specified\"",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
