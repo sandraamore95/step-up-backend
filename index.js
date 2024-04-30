@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URL)
     });
 
 // Middleware
-app.use(cors())
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));

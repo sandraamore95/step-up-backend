@@ -71,8 +71,21 @@ const getShoeById = async (shoeId) => {
     }
 }
 
+// Función para incrementar la popularidad de una zapatilla por su ID
+async function incrementPopularity(shoeId) {
+    try {
+        const shoe = await Shoe.findById(shoeId);
+        if (!shoe) {
+            throw new Error('Zapatilla no encontrada');
+        }
+        shoe.popularity += 1;
+        await shoe.save();
+    } catch (error) {
+        throw new Error('Error al incrementar la popularidad de la zapatilla');
+    }
+}
 
 
 module.exports = {
-    insertInitialData,getAllShoes,getShoeById
+    insertInitialData,getAllShoes,getShoeById,incrementPopularity
 }
