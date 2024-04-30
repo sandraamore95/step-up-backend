@@ -3,7 +3,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Air Max 90',
-        size: 10,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 150,
         color: 'White',
         popularity:13,
@@ -18,7 +18,7 @@ const shoesData = [
     {
         brand: 'Adidas',
         model: 'Originals Gazelle para Mujer',
-        size: 9,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'Black',
         popularity:10,
@@ -32,7 +32,7 @@ const shoesData = [
     },{
         brand: 'Reebok',
         model: 'club c 85',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 90,
         color: 'White',
         popularity:0,
@@ -47,7 +47,7 @@ const shoesData = [
     {
         brand: 'Puma',
         model: '180',
-        size: 7,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 80,
         color: 'Blue',
         popularity:2,
@@ -62,7 +62,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Air Max 97',
-        size: 9,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 120,
         color: 'White',
         popularity:8,
@@ -77,7 +77,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Air Max 95',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 150,
         color: 'Black',
         popularity:17,
@@ -92,7 +92,7 @@ const shoesData = [
     {
         brand: 'Reebok',
         model: 'Classic Leather Hexalite',
-        size: 9,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 90,
         color: 'White',
         popularity:24,
@@ -107,7 +107,7 @@ const shoesData = [
     {
         brand: 'Reebok',
         model: 'Preseason 94 Low',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:28,
@@ -124,7 +124,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Air Max 270 Children',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:50,
@@ -139,7 +139,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Nike Dunk Remastered',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:50,
@@ -151,29 +151,11 @@ const shoesData = [
             
         ]
     },
-
-
-    {
-        brand: 'Nike',
-        model: 'Nike Dunk Remastered',
-        size: 8,
-        price: 100,
-        color: 'White',
-        popularity:50,
-        images: [
-            'https://i8.amplience.net/i/jpl/jd_668425_a?qlt=92&w=750&h=531&v=1&fmt=auto',
-            'https://i8.amplience.net/i/jpl/jd_668425_b?qlt=92&w=750&h=531&v=1&fmt=auto',
-            'https://i8.amplience.net/i/jpl/jd_668425_c?qlt=92&w=750&h=531&v=1&fmt=auto',
-            'https://i8.amplience.net/i/jpl/jd_668425_f?qlt=92&w=750&h=531&v=1&fmt=auto'
-            
-        ]
-    },
-
 
     {
         brand: 'Rebook',
         model: 'Reebok Flexagon júnior',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:80,
@@ -192,7 +174,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Nike Air Force 1 Low',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:50,
@@ -210,7 +192,7 @@ const shoesData = [
     {
         brand: 'Nike',
         model: 'Nike Air Force 1 Shadow Mujer',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:23,
@@ -226,7 +208,7 @@ const shoesData = [
     {
         brand: 'Puma',
         model: 'Suede XL',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:2,
@@ -241,7 +223,7 @@ const shoesData = [
     , {
         brand: 'Reebok',
         model: 'Classic Leather Perfect Split Children',
-        size: 8,
+        sizes: [36, 37, 38, 39, 40, 41, 42], 
         price: 100,
         color: 'White',
         popularity:24,
@@ -264,24 +246,11 @@ const collectionsData = [
     {
         name: 'Colección de Invierno',
         description: 'Explora nuestra colección de invierno con zapatillas cálidas y resistentes.',
-        includedShoes: ['Classic Leather Hexalite', 'club c 85'] // Nombres de las zapatillas que pertenecen a esta colección
+        includedShoes: ['Classic Leather Hexalite', 'club c 85','Reebok Flexagon júnior','Classic Leather Perfect Split Children'] // Nombres de las zapatillas que pertenecen a esta colección
     }
 ];
 
 const offersData = [
-    {
-        title: 'Oferta de Verano',
-        details: '¡Descuento especial en zapatillas para el verano!',
-        includedShoes: ['180','Preseason 94 Low','Air Max 95'] // Nombres de las zapatillas incluidas
-    },
-    {
-        title: 'Oferta de Invierno',
-        details: '¡Gran venta de invierno en zapatillas!',
-        includedShoes: ['Classic Leather Hexalite'] // Nombres de las zapatillas incluidas
-    }
-];
-
-const popularShoesData = [
     {
         title: 'Oferta de Verano',
         details: '¡Descuento especial en zapatillas para el verano!',
