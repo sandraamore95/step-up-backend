@@ -104,6 +104,12 @@ const profile = async (req, res) => {
 
 }
 
+const logout = async (req, res) => {
+    res.clearCookie('token'); // Elimina la cookie que contiene el token de autenticación
+    res.status(200).json({ message: 'Logout exitoso' });
+}
+
+
 module.exports = {
-    test, test2, register, login, profile
+    test, test2, register, login, profile,logout
 }
