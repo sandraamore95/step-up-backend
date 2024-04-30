@@ -7,7 +7,8 @@ const shoeSchema = new mongoose.Schema({
     price: Number,
     color: String,
     popularity:Number,
-    images: [String]
+    images: [String],
+    description:String
 });
 
 module.exports = mongoose.model('Shoe', shoeSchema);
