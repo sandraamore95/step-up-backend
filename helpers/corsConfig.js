@@ -1,4 +1,3 @@
-// corsConfig.js
 const cors = require('cors');
 
 const corsOptions = {
