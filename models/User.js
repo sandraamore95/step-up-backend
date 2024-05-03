@@ -7,7 +7,12 @@ const userSchema = new Schema({
         type: String,
         unique: true // Ensures email addresses are unique in the collection
     },
-    password: String
+    password: String,
+    role: {
+        type: String,
+        enum: ['user', 'admin'], // Define los roles permitidos
+        default: 'user' // Asigna el rol por defecto
+    }
 });
 
 // Don't forget to compile your model
