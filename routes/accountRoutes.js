@@ -9,11 +9,25 @@ router.use(cors);
 
 
 //ruta protegida solo accesible por usuario autenticado
-router.post('/wishList/:zapatillaId', requireAuth, (req, res) => {
-    const userData = req.user;
-    const zapatillaId = req.params.zapatillaId; 
-    const result = accountController.guardarEnListaDeseos(userData, zapatillaId);
-    res.json(result);
+router.post('/wishList/:zapatillaId', requireAuth, async (req, res) => {
+    try {
+        const userData = req.user;
+        const zapatillaId = req.params.zapatillaId;
+        console.log(zapatillaId);
+       
+        const resultado = await accountController.guardarEnListaDeseos(userData, zapatillaId);
+        
+        if (resultado.success) {
+            //si es correcto
+            res.json({ success: true, message: resultado.message, usuario: resultado.usuario });
+        } else {
+            // Si ha fallado
+            res.status(400).json({ success: false, message: resultado.message });
+        }
+    } catch (error) {
+        console.error("Error en ruta /wishList:", error);
+        res.status(500).json({ success: false, message: "Error en ruta /wishList. Inténtalo de nuevo más tarde." });
+    }
 });
 
 module.exports = router;
