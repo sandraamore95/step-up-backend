@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const cors = require('../helpers/corsConfig');
+const cors = require('../middlewares/corsConfig');
 const shoeController = require('../controllers/shoeController');
+const requireAuth = require('../middlewares/authMiddleware');
 
 //middlewares 
 router.use(cors);
@@ -27,6 +28,20 @@ router.get('/shoes/:id', async (req, res) => {
         console.error('Error al obtener el zapato por ID:', error);
         res.status(500).json({ error: 'Error al obtener el zapato por ID' });
     }
+});
+
+//ruta protegida
+router.get('/pruebaAuth', requireAuth, (req, res) => {
+    const userData = req.user;  // Suponiendo que `requireAuth` añade `req.user`
+    const result = shoeController.pruebaPermission(userData);
+    res.json(result);
+});
+
+//ruta protegida
+router.get('/pruebaAuth', requireAuth, (req, res) => {
+    const userData = req.user;  // Suponiendo que `requireAuth` añade `req.user`
+    const result = shoeController.pruebaPermission(userData);
+    res.json(result);
 });
 
 

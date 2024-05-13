@@ -86,6 +86,15 @@ async function incrementPopularity(shoeId) {
 }
 
 
+//funcion para probar las rutas protegidas
+const pruebaPermission = (userData) => {
+    return {
+        message: "Has accedido exitosamente a un recurso protegido.",
+        userData: userData
+    };
+};
+
+
 module.exports = {
-    insertInitialData,getAllShoes,getShoeById,incrementPopularity
+    insertInitialData,getAllShoes,getShoeById,incrementPopularity,pruebaPermission
 }

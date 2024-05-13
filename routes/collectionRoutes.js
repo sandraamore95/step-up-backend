@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cors = require('../helpers/corsConfig');
+const cors = require('../middlewares/corsConfig');
 const collectionController = require('../controllers/collectionController');
 
 //middlewares 

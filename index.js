@@ -7,6 +7,7 @@ const shoeRoutes = require('./routes/shoeRoutes');
 const collectionRoutes = require('./routes/collectionRoutes');
 const offersRoutes = require('./routes/offersRoutes');
 const authRoutes = require('./routes/authRoutes');
+const accountRoutes = require('./routes/accountRoutes');
 const shoeController = require('./controllers/shoeController');
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/', authRoutes);
 app.use('/', shoeRoutes);
 app.use('/', collectionRoutes);
 app.use('/', offersRoutes);
+app.use('/', accountRoutes);
 
 // Port
 const PORT = process.env.PORT || 3000;
