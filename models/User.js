@@ -12,8 +12,7 @@ const userSchema = new Schema({
         type: String,
         enum: ['user', 'admin'], // Define los roles permitidos
         default: 'user' // Asigna el rol por defecto
-    },
-    favoriteShoes: [{ type: Schema.Types.ObjectId, ref: 'Shoe' }]
+    }
 });
 
 // Don't forget to compile your model

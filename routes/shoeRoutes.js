@@ -30,12 +30,6 @@ router.get('/shoes/:id', async (req, res) => {
     }
 });
 
-//ruta protegida
-router.get('/pruebaAuth', requireAuth, (req, res) => {
-    const userData = req.user;  // Suponiendo que `requireAuth` añade `req.user`
-    const result = shoeController.pruebaPermission(userData);
-    res.json(result);
-});
 
 //ruta protegida
 router.get('/pruebaAuth', requireAuth, (req, res) => {

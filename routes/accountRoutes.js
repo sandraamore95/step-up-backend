@@ -12,10 +12,11 @@ router.use(cors);
 router.post('/wishList/:zapatillaId', requireAuth, async (req, res) => {
     try {
         const userData = req.user;
+        console.log(userData);
         const zapatillaId = req.params.zapatillaId;
         console.log(zapatillaId);
        
-        const resultado = await accountController.guardarEnListaDeseos(userData, zapatillaId);
+        const resultado = await accountController.guardarEnFavoritos(userData, zapatillaId);
         
         if (resultado.success) {
             //si es correcto
