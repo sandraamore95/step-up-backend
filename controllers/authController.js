@@ -64,36 +64,43 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        //check if user exist
-        const user_exist = await User.findOne({ email })
+        // Verificar si el usuario existe
+        const user_exist = await User.findOne({ email });
         if (!user_exist) {
             return res.json({
-                error: 'user not found!'
-            })
+                error: '¡Usuario no encontrado!'
+            });
         }
 
-        //check if passwords match
-        const passwMatch = comparePassword(password, user_exist.password)
+        // Comparar contraseñas
+        const hash = await hashPassword(password);
+        const passwMatch = await comparePassword(password,user_exist.password);
+        
         if (passwMatch) {
-            //if user is correct -> token 
+            // Si las contraseñas coinciden, generar el token JWT
             jwt.sign(
-                { email: user_exist.email, id: user_exist._id, name: user_exist.name 
-
-                }, process.env.JWT_SECRET, {}, (err, token) => {
-                if (err) throw err;
-                //returns user + token
-                res.cookie('token', token).json(user_exist)
-            })
-        }
-        if (!passwMatch) {
+                { email: user_exist.email, id: user_exist._id, name: user_exist.name },
+                process.env.JWT_SECRET,
+                {},
+                (err, token) => {
+                    if (err) throw err;
+                    // Devolver el token junto con los datos del usuario
+                    res.cookie('token', token).json(user_exist);
+                }
+            );
+        } else {
+            // Si las contraseñas no coinciden, devolver un mensaje de error
+            console.log("Las contraseñas no coinciden");
             res.json({
-                error: 'password dont match!'
-            })
+                error: '¡La contraseña no coincide!'
+            });
         }
     } catch (error) {
-        console.log(error);
+        console.error('Error al iniciar sesión:', error);
+        res.status(500).json({ error: 'Error del servidor al iniciar sesión' });
     }
-}
+};
+
 
 const profile = async (req, res) => {
     const { token } = req.cookies;
