@@ -1,6 +1,9 @@
+const mongoose = require('mongoose');
 const FavoriteShoes = require("../models/FavoriteShoesSchema");
+const Cart = require("../models/CartSchema");
+const shoeController = require('../controllers/shoeController');
 
-async function guardarEnFavoritos(userData, shoeId) {
+async function addFavorite(userData, shoeId) {
     try {
         // Buscar el documento de zapatillas favoritas del usuario
         let favoriteShoes = await FavoriteShoes.findOne({ user: userData.id });
@@ -35,6 +38,70 @@ async function guardarEnFavoritos(userData, shoeId) {
     }
 }
 
+
+
+async function addToCart(userData, product) {
+    const userId = userData.id;
+    const { shoeId, quantity } = product;  // Obtiene el ID del producto y la cantidad desde el cuerpo de la solicitud
+    console.log(product);
+    try {
+        const shoeObjectId = await shoeController.getShoeById(shoeId); 
+      
+
+        try {
+        // Buscar el carrito del usuario
+        let cart = await Cart.findOne({ user: userId });
+
+        // Si no existe un carrito para este usuario, crea uno nuevo
+        if (!cart) {
+            cart = new Cart({
+                user: userId,
+                products: [{ product: shoeId, quantity }]
+            });
+        } else {
+            // Buscar el producto en el carrito
+           
+            const productIndex = cart.products.findIndex(item => item.product.equals(shoeObjectId.id));
+            // Si ya existe el carrito, busca el producto en el carrito
+
+            console.log(productIndex);
+
+            if (productIndex >= 0) {
+                console.log("existe ya en el carrito");
+                // Si el producto ya está en el carrito, incrementa la cantidad
+                cart.products[productIndex].quantity += quantity;
+            } else {
+                // Si no está, añade el producto al carrito
+                cart.products.push({ product: shoeId, quantity });
+            }
+        }
+        await cart.save();
+        return { success: true, message: "Producto añadido al carrito", cart };
+    } catch (error) {
+        console.error("Error al añadir producto al carrito:", error);
+        return { success: false, message: "Error al añadir producto al carrito:" };
+
+    }
+
+
+
+
+
+
+
+
+
+       
+    } catch (error) {
+        console.error('Error al obtener el zapato:', error);
+    }
+    
+   
+    
+}
+
+
+
 module.exports = {
-    guardarEnFavoritos
+    addFavorite, addToCart
 }
