@@ -13,7 +13,7 @@ const getAllOffers = async (req, res) => {
 const getOfferByName = async (req, res) => {
     const title = req.params.title; 
     try {
-        const offer = await Collection.findOne({ title });
+        const offer = await Offer.findOne({ title });
         if (!offer) {
             return res.status(404).json({ message: 'Oferta no encontrada' });
         }
