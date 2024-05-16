@@ -80,6 +80,22 @@ const getShoeById = async (req, res) => {
 }
 
 
+
+const getShoeByModel = async (req, res) => {
+    const model = req.params.model; 
+    try {
+        const shoe = await Shoe.findOne({ model });
+        if (!shoe) {
+            return res.status(404).json({ message: 'Zapatilla no encontrada' });
+        }
+        res.json(shoe);
+    } catch (error) {
+        console.error('Error al obtener la Zapatilla por nombre:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+
 // Función para incrementar la popularidad de una zapatilla por su ID
 async function incrementPopularity(shoeId) {
     try {
@@ -106,5 +122,5 @@ const pruebaPermission = (req, res) => {
 };
 
 module.exports = {
-    insertInitialData,getAllShoes,getShoeById,incrementPopularity,pruebaPermission
+    insertInitialData,getAllShoes,getShoeById,getShoeByModel,incrementPopularity,pruebaPermission
 }

@@ -9,7 +9,7 @@ router.use(cors);
 
 router.get('/shoes', shoeController.getAllShoes);
 router.get('/shoes/:id', shoeController.getShoeById);
-
+router.get('/shoes/name/:model', shoeController.getShoeByModel);
 //ruta protegida con autentificacion 
 router.get('/pruebaAuth', requireAuth, shoeController.pruebaPermission);
 
