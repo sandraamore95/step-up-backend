@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 const Cart = require("../models/CartSchema");
-const shoeController = require('../controllers/shoeController');
+const Shoe = require('../models/Shoe');
 
 
 async function addToCart(req, res) {
-    const userId = req.user.id; // Asumiendo que `req.user` contiene los datos del usuario autenticado
-    const { shoeId, quantity } = req.body; // Obtiene el ID del producto y la cantidad desde el cuerpo de la solicitud
+    const userId = req.user.id; 
+    const { product } = req.body; // Obtén el objeto 'product' del cuerpo de la solicitud
+    const { shoeId, quantity } = product;
 
     try {
         // Asegurar que el zapato exista
-        const shoe = await shoeController.getShoeById(shoeId);
+        const shoe = await Shoe.findById(shoeId);
         if (!shoe) {
             return res.status(404).json({ success: false, message: "Zapato no encontrado." });
         }
