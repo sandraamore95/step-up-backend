@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Cart = require("../models/CartSchema");
 const Shoe = require('../models/Shoe');
+const { get } = require('../routes/shoeRoutes');
 
 
 async function addToCart(req, res) {
@@ -41,6 +42,24 @@ async function addToCart(req, res) {
     }
 }
 
+async function getCart(req, res) {
+    const userId = req.user.id;
+
+    try {
+        // Buscar el carrito del usuario
+        const cart = await Cart.findOne({ user: userId }).populate('products.product', 'name price');
+
+        if (!cart) {
+            return res.status(404).json({ success: false, message: "Carrito no encontrado para este usuario." });
+        }
+
+        res.status(200).json({ success: true, cart });
+    } catch (error) {
+        console.error("Error al obtener el carrito del usuario:", error);
+        res.status(500).json({ success: false, message: "Error al obtener el carrito del usuario." });
+    }
+}
+
 module.exports = {
-   addToCart
+   addToCart,getCart
 }
