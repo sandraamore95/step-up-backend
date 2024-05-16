@@ -32,6 +32,28 @@ async function addFavorite(req, res) {
         res.status(500).json({ success: false, message: "Error al agregar zapatilla a favoritos." });
     }
 }
+
+async function getFavoriteShoes(req, res) {
+    const userId = req.user.id;
+
+    try {
+        // Buscar las zapatillas favoritas del usuario
+        const favoriteShoes = await FavoriteShoes.findOne({ user: userId }).populate('shoes');
+
+        if (!favoriteShoes) {
+            return res.status(404).json({ success: false, message: "No se encontraron zapatillas favoritas para este usuario." });
+        }
+
+        // Devolver las zapatillas favoritas encontradas
+        return res.status(200).json({ success: true, favoriteShoes });
+    } catch (error) {
+        console.error("Error al obtener zapatillas favoritas:", error);
+        return res.status(500).json({ success: false, message: "Error interno del servidor al obtener zapatillas favoritas." });
+    }
+}
+
+
+
 module.exports = {
-    addFavorite
+    addFavorite,getFavoriteShoes
 }

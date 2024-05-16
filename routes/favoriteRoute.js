@@ -8,8 +8,9 @@ const requireAuth = require('../middlewares/authMiddleware');
 router.use(cors);
 
 
-//ruta protegida solo accesible por usuario autenticado
+//rutas protegidas solo accesible por usuario autenticado
 router.post('/favorites/:shoeId', requireAuth, favoritesController.addFavorite);
+router.get('/favoriteShoes/', requireAuth, favoritesController.getFavoriteShoes);
 
 
 
