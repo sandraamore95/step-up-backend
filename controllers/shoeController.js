@@ -51,25 +51,34 @@ const insertInitialData = async () => {
 
 
 
-const getAllShoes = async () => {
+const getAllShoes = async (req, res) => {
     try {
         const shoes = await Shoe.find();
-        return shoes;
+        res.json(shoes);
     } catch (error) {
         console.error('Error al obtener las zapatillas:', error);
-        throw error;
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 }
 
-const getShoeById = async (shoeId) => {
+const getShoeById = async (req, res) => {
+    const shoeId = req.params.id; 
     try {
         const shoe = await Shoe.findById(shoeId);
-        return shoe;
+        if (!shoe) {
+            return res.status(404).json({ message: 'Zapato no encontrado' });
+        }
+        // incrementa la popularidad
+        incrementPopularity(shoeId).catch(error => {
+            console.error('Error al incrementar la popularidad:', error);
+        });
+        res.json(shoe);
     } catch (error) {
         console.error('Error al obtener el zapato por ID:', error);
-        throw error;
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 }
+
 
 // Función para incrementar la popularidad de una zapatilla por su ID
 async function incrementPopularity(shoeId) {
@@ -87,13 +96,14 @@ async function incrementPopularity(shoeId) {
 
 
 //funcion para probar las rutas protegidas
-const pruebaPermission = (userData) => {
-    return {
+const pruebaPermission = (req, res) => {
+    const userData = req.user; 
+    const response = {
         message: "Has accedido exitosamente a un recurso protegido.",
         userData: userData
     };
+    res.json(response);
 };
-
 
 module.exports = {
     insertInitialData,getAllShoes,getShoeById,incrementPopularity,pruebaPermission

@@ -3,56 +3,52 @@ const FavoriteShoes = require("../models/FavoriteShoesSchema");
 const Cart = require("../models/CartSchema");
 const shoeController = require('../controllers/shoeController');
 
-async function addFavorite(userData, shoeId) {
+async function addFavorite(req, res) {
+    const userData = req.user;  
+    const shoeId = req.params.shoeId; 
+
     try {
         // Buscar el documento de zapatillas favoritas del usuario
         let favoriteShoes = await FavoriteShoes.findOne({ user: userData.id });
 
-        // Si el usuario no tiene un documento de zapatillas favoritas, crear uno nuevo y guardarlo
+        // Si no existe, crear un nuevo documento
         if (!favoriteShoes) {
             favoriteShoes = new FavoriteShoes({
                 user: userData.id,
-                shoes: [shoeId] // Agregar directamente la nueva zapatilla
+                shoes: [shoeId]
             });
             await favoriteShoes.save();
-            return { success: true, message: "Zapatilla guardada en favoritos", userData };
+            return res.status(201).json({ success: true, message: "Zapatilla añadida a favoritos." });
         }
 
         // Verificar si la zapatilla ya está en la lista
         if (favoriteShoes.shoes.includes(shoeId)) {
-            return { success: false, message: "La zapatilla ya está en tus favoritos", userData };
+            return res.status(409).json({ success: false, message: "La zapatilla ya está en tus favoritos." });
         }
-
-        // Agregar la zapatilla al array de zapatillas favoritas y guardar
         favoriteShoes.shoes.push(shoeId);
         await favoriteShoes.save();
 
-        // Opcional: Poblar datos antes de devolverlos (si necesitas retornar los datos poblados)
-        await favoriteShoes.populate('shoes');
-        await favoriteShoes.populate('user');
-
-        return { success: true, message: "Zapatilla guardada en favoritos", userData };
+        return res.status(201).json({ success: true, message: "Zapatilla añadida a favoritos." });
     } catch (error) {
-        console.error("Error al agregar zapatilla como favorita:", error);
-        return { success: false, message: "Error al agregar zapatilla como favorita." };
+        console.error("Error al agregar zapatilla a favoritos:", error);
+        res.status(500).json({ success: false, message: "Error al agregar zapatilla a favoritos." });
     }
 }
 
 
+async function addToCart(req, res) {
+    const userId = req.user.id; // Asumiendo que `req.user` contiene los datos del usuario autenticado
+    const { shoeId, quantity } = req.body; // Obtiene el ID del producto y la cantidad desde el cuerpo de la solicitud
 
-async function addToCart(userData, product) {
-    const userId = userData.id;
-    const { shoeId, quantity } = product;  // Obtiene el ID del producto y la cantidad desde el cuerpo de la solicitud
-    console.log(product);
     try {
-        const shoeObjectId = await shoeController.getShoeById(shoeId); 
-      
+        // Asegurar que el zapato exista
+        const shoe = await shoeController.getShoeById(shoeId);
+        if (!shoe) {
+            return res.status(404).json({ success: false, message: "Zapato no encontrado." });
+        }
 
-        try {
-        // Buscar el carrito del usuario
+        // Buscar o crear carrito
         let cart = await Cart.findOne({ user: userId });
-
-        // Si no existe un carrito para este usuario, crea uno nuevo
         if (!cart) {
             cart = new Cart({
                 user: userId,
@@ -60,47 +56,22 @@ async function addToCart(userData, product) {
             });
         } else {
             // Buscar el producto en el carrito
-           
-            const productIndex = cart.products.findIndex(item => item.product.equals(shoeObjectId.id));
-            // Si ya existe el carrito, busca el producto en el carrito
-
-            console.log(productIndex);
-
+             const productIndex = cart.products.findIndex(item => item.product.equals(shoe.id));
             if (productIndex >= 0) {
-                console.log("existe ya en el carrito");
-                // Si el producto ya está en el carrito, incrementa la cantidad
+                // Incrementar la cantidad si el producto ya está en el carrito
                 cart.products[productIndex].quantity += quantity;
             } else {
-                // Si no está, añade el producto al carrito
+                // Añadir el producto al carrito si no está
                 cart.products.push({ product: shoeId, quantity });
             }
         }
         await cart.save();
-        return { success: true, message: "Producto añadido al carrito", cart };
+        res.status(201).json({ success: true, message: "Producto añadido al carrito", cart });
     } catch (error) {
         console.error("Error al añadir producto al carrito:", error);
-        return { success: false, message: "Error al añadir producto al carrito:" };
-
+        res.status(500).json({ success: false, message: "Error al añadir producto al carrito." });
     }
-
-
-
-
-
-
-
-
-
-       
-    } catch (error) {
-        console.error('Error al obtener el zapato:', error);
-    }
-    
-   
-    
 }
-
-
 
 module.exports = {
     addFavorite, addToCart
