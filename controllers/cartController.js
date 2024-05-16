@@ -34,7 +34,7 @@ async function addToCart(req, res) {
             }
         }
         await cart.save();
-        res.status(201).json({ success: true, message: "Producto añadido al carrito", cart });
+        res.status(201).json({ success: true, message: "Producto añadido al carrito" });
     } catch (error) {
         console.error("Error al añadir producto al carrito:", error);
         res.status(500).json({ success: false, message: "Error al añadir producto al carrito." });
