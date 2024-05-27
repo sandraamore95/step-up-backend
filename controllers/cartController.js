@@ -4,7 +4,7 @@ const Shoe = require('../models/Shoe');
 const { get } = require('../routes/shoeRoutes');
 
 
-async function addToCart(req, res) {
+const addToCart = async (req, res) => {
     const userId = req.user.id; 
     const { product } = req.body; // Obtén el objeto 'product' del cuerpo de la solicitud
     const { shoeId, quantity } = product;
@@ -42,7 +42,7 @@ async function addToCart(req, res) {
     }
 }
 
-async function getCart(req, res) {
+const getCart = async (req, res) => {
     const userId = req.user.id;
 
     try {

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const FavoriteShoes = require("../models/FavoriteShoesSchema");
 
-async function addFavorite(req, res) {
+
+const addFavorite = async (req, res) => {
     const userData = req.user;  
     const shoeId = req.params.shoeId; 
 
@@ -33,7 +34,8 @@ async function addFavorite(req, res) {
     }
 }
 
-async function getFavoriteShoes(req, res) {
+
+const getFavoriteShoes = async (req, res) => {
     const userId = req.user.id;
 
     try {
@@ -52,8 +54,25 @@ async function getFavoriteShoes(req, res) {
     }
 }
 
+const existsFavorite = async (req, res) => {
+    const userId = req.user.id;  
+    const shoeId = req.params.shoeId; 
+    try {
+        console.log(userId);
+        console.log(shoeId);
+        const favorite = await FavoriteShoes.findOne({ user: userId ,shoes:shoeId })
+        if (favorite) {
+            return res.json({ exists: true });
+        } else {
+            return res.json({ exists: false });
+        }
+    } catch (error) {
+        console.error('Error verificando favoritos:', error);
+        res.status(500).json({ error: 'Error verificando favoritos' });
+    }
+};
 
 
 module.exports = {
-    addFavorite,getFavoriteShoes
+    addFavorite,getFavoriteShoes,existsFavorite
 }
