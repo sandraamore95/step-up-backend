@@ -54,6 +54,33 @@ const getFavoriteShoes = async (req, res) => {
     }
 }
 
+const deleteFavorite = async (req, res) => {
+    const userId = req.user.id; // Supone que estás usando algún middleware para autenticar y obtener el usuario
+    const shoeId = req.params.shoeId;
+
+    try {
+        // Verificar si el zapato está en la lista de favoritos del usuario
+        const favorite = await FavoriteShoes.findOne({ user: userId });
+        if (favorite && favorite.shoes.includes(shoeId)) {
+            // Si el zapato está en la lista de favoritos, proceder a eliminarlo
+            await FavoriteShoes.findOneAndUpdate(
+                { user: userId },
+                { $pull: { shoes: shoeId } },
+                { new: true }
+            );
+            return res.json({ message: 'El zapato ha sido eliminado de favoritos' });
+        } else {
+            // Si el zapato no está en la lista de favoritos, devolver un mensaje de error
+            return res.status(404).json({ message: 'El zapato no está en la lista de favoritos' });
+        }
+    } catch (error) {
+        console.error('Error eliminando favoritos:', error);
+        res.status(500).json({ error: 'Error eliminando favoritos' });
+    }
+};
+
+// elimina todos los zapatos de favoritos no deberia ocurrir MIRARR
+
 const existsFavorite = async (req, res) => {
     const userId = req.user.id;  
     const shoeId = req.params.shoeId; 
@@ -74,5 +101,5 @@ const existsFavorite = async (req, res) => {
 
 
 module.exports = {
-    addFavorite,getFavoriteShoes,existsFavorite
+    addFavorite,getFavoriteShoes,existsFavorite,deleteFavorite
 }

@@ -12,6 +12,6 @@ router.use(cors);
 router.post('/favorites/:shoeId', requireAuth, favoritesController.addFavorite);
 router.get('/favoriteShoes/', requireAuth, favoritesController.getFavoriteShoes);
 router.get('/existFavorites/:shoeId', requireAuth, favoritesController.existsFavorite);
-
+router.delete('/delete/:shoeId', requireAuth,favoritesController.deleteFavorite);
 
 module.exports = router;
