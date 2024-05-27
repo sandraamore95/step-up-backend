@@ -105,15 +105,30 @@ const login = async (req, res) => {
 const profile = async (req, res) => {
     const { token } = req.cookies;
     if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
-            if (err) throw err;
-            res.json(user)
-        })
-    }else{
-        res.json(null)
+      jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
+        if (err) {
+          res.json(null);
+        } else {
+          try {
+            const user = await User.findById(decodedToken.id);
+            if (user) {
+              // Asegúrate de excluir campos sensibles como la contraseña
+              const { _id, name, email, role } = user;
+              res.json({ _id, name, email, role });
+            } else {
+              res.json(null);
+            }
+          } catch (error) {
+            console.error('Error al obtener los datos del usuario:', error);
+            res.json(null);
+          }
+        }
+      });
+    } else {
+      res.json(null);
     }
-
-}
+  }
+  
 
 const logout = async (req, res) => {
     res.clearCookie('token'); // Elimina la cookie que contiene el token de autenticación
