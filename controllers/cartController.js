@@ -47,7 +47,7 @@ const getCart = async (req, res) => {
 
     try {
         // Buscar el carrito del usuario
-        const cart = await Cart.findOne({ user: userId }).populate('products.product', 'name price');
+        const cart = await Cart.findOne({ user: userId }).populate('products.product');
 
         if (!cart) {
             return res.status(404).json({ success: false, message: "Carrito no encontrado para este usuario." });
