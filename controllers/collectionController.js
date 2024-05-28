@@ -13,7 +13,7 @@ const getAllCollections = async (req, res) => {
 const getCollectionByName = async (req, res) => {
     const name = req.params.name; // Asumiendo que el nombre se pasa como parámetro de la ruta
     try {
-        const collection = await Collection.findOne({ name });
+        const collection = await Collection.findOne({ name }).populate('includedShoes');
         if (!collection) {
             return res.status(404).json({ message: 'Colección no encontrada' });
         }
