@@ -9,7 +9,7 @@ router.use(cors);
 
 
 //ruta protegida solo accesible por usuario autenticado
-router.post('/cart/add', requireAuth, cartController.addToCart);
+router.post('/add', requireAuth, cartController.addToCart);
 router.get('/cart-user', requireAuth, cartController.getCart);
 
 

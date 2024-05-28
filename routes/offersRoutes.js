@@ -6,7 +6,7 @@ const offerController = require('../controllers/offerController');
 //middlewares 
 router.use(cors);
 
-router.get('/offers', offerController.getAllOffers);
-router.get('/offers/name/:title', offerController.getOfferByName);
+router.get('/', offerController.getAllOffers);
+router.get('/name/:title', offerController.getOfferByName);
 
 module.exports = router;

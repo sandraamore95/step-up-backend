@@ -7,11 +7,10 @@ const requireAuth = require('../middlewares/authMiddleware');
 //middlewares 
 router.use(cors);
 
-router.get('/shoes', shoeController.getAllShoes);
-router.get('/shoes/:id', shoeController.getShoeById);
-router.get('/shoes/name/:model', shoeController.getShoeByModel);
-//ruta protegida con autentificacion 
-router.get('/pruebaAuth', requireAuth, shoeController.pruebaPermission);
+router.get('/', shoeController.getAllShoes);
+router.get('/:id', shoeController.getShoeById);
+router.get('/name/:model', shoeController.getShoeByModel);
+
 
 
 

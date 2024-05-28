@@ -30,13 +30,13 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use('/', authRoutes);
-app.use('/', shoeRoutes);
-app.use('/', collectionRoutes);
-app.use('/', offersRoutes);
-app.use('/', favoriteRoutes);
-app.use('/', cartRoutes);
-app.use('/', accountRoutes);
+app.use('/auth', authRoutes);
+app.use('/shoes', shoeRoutes);
+app.use('/collections', collectionRoutes);
+app.use('/offers', offersRoutes);
+app.use('/favorites', favoriteRoutes);
+app.use('/cart', cartRoutes);
+app.use('/account', accountRoutes);
 
 // Port
 const PORT = process.env.PORT || 3000;
