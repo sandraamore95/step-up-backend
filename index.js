@@ -11,6 +11,7 @@ const favoriteRoutes = require('./routes/favoriteRoute');
 const cartRoutes = require('./routes/cartRoute');
 const accountRoutes = require('./routes/accountRoutes');
 const shoeController = require('./controllers/shoeController');
+const corsConfig = require('./middlewares/corsConfig');
 const app = express();
 
 // Connection to Database
@@ -24,7 +25,7 @@ mongoose.connect(process.env.MONGO_URL)
     });
 
 // Middleware
-
+app.use(corsConfig);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
