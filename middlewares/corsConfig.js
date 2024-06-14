@@ -2,7 +2,7 @@ const cors = require('cors');
 
 const corsOptions = {
     credentials: true,
-    origin: 'https://step-up-frontend.vercel.app'
+    origin: 'http://localhost:5173'
 };
 
 /*

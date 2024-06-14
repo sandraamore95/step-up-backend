@@ -1,24 +1,68 @@
 const mongoose = require('mongoose');
 const Cart = require("../models/CartSchema");
 const Shoe = require('../models/Shoe');
-const { get } = require('../routes/shoeRoutes');
 
 
 const addToCart = async (req, res) => {
-    const userId = req.user.id; 
-    const { product } = req.body; // Obtén el objeto 'product' del cuerpo de la solicitud
-    const { shoeId, quantity } = product;
-
     try {
-        // Asegurar que el zapato exista
+        const userId = req.user.id;
+        const { cart } = req.body; // Obtén el arreglo de productos desde el cuerpo de la solicitud
+
+        // Verifica si hay datos en cart
+        if (!cart || !Array.isArray(cart) || cart.length === 0) {
+            return res.status(400).json({ success: false, message: 'No se han proporcionado productos válidos.' });
+        }
+
+        // Crear un arreglo para almacenar los objetos del carrito
+        const cartItems = [];
+
+        // Iterar sobre cada producto en el carrito
+        for (const item of cart) {
+            const { product, quantity, size } = item;
+
+            // Verificar si el producto tiene todos los campos necesarios
+            if (!product || !quantity || !size) {
+                console.error('Producto incompleto:', item);
+                continue; // O manejar el error según sea necesario
+            }
+
+            // Construir el objeto para el carrito
+            const cartItem = {
+                products: cart.map(item => ({
+                    product: item.product._id, // Aquí asumimos que item.product._id es el ID del producto en MongoDB
+                    quantity: item.quantity,
+                    size: item.size
+                }))
+            };
+            
+            console.log(cartItem);
+        }
+
+        // Aquí puedes hacer algo con cartItems, como guardarlo en la base de datos
+        console.log('Items de carrito a guardar:', cartItems);
+
+        // Ejemplo: guardar cartItems en MongoDB
+        // await Cart.findOneAndUpdate({ user: userId }, { products: cartItems }, { upsert: true });
+
+        res.status(200).json({ success: true, message: 'Productos agregados al carrito correctamente.' });
+    } catch (error) {
+        console.error('Error al procesar la solicitud:', error);
+        res.status(500).json({ success: false, message: 'Error al procesar la solicitud.' });
+    }
+};
+
+/*
+
+ // Asegurar que el zapato exista
         const shoe = await Shoe.findById(shoeId);
         if (!shoe) {
             return res.status(404).json({ success: false, message: "Zapato no encontrado." });
         }
-
-        // Buscar o crear carrito
+        console.log("el zapato existe ", shoeId);
+ // Buscar o crear carrito
         let cart = await Cart.findOne({ user: userId });
         if (!cart) {
+            console.log("no existe el cart ");
             cart = new Cart({
                 user: userId,
                 products: [{ product: shoeId, quantity }]
@@ -35,12 +79,19 @@ const addToCart = async (req, res) => {
             }
         }
         await cart.save();
-        res.status(201).json({ success: true, message: "Producto añadido al carrito" });
-    } catch (error) {
-        console.error("Error al añadir producto al carrito:", error);
-        res.status(500).json({ success: false, message: "Error al añadir producto al carrito." });
-    }
-}
+
+
+*/
+
+
+
+
+
+
+
+
+
+
 
 const getCart = async (req, res) => {
     const userId = req.user.id;
@@ -61,5 +112,5 @@ const getCart = async (req, res) => {
 }
 
 module.exports = {
-   addToCart,getCart
+    addToCart, getCart
 }
