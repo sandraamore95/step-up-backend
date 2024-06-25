@@ -20,7 +20,7 @@ const addToCart = async (req, res) => {
         // Iterar sobre cada producto en el carrito
         for (const item of cart) {
             const { product, quantity, size } = item;
-console.log(item);
+            console.log(item);
             // Verificar si el producto tiene todos los campos necesarios
             if (!product || !quantity || !size) {
                 console.error('Producto incompleto:', item);

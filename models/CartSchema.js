@@ -5,7 +5,9 @@ const cartSchema = new mongoose.Schema({
     products: [
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: 'Shoe' }, // Referencia a la zapatilla 
-            quantity: { type: Number, default: 1 } // Cantidad del producto en el carrito
+            quantity: { type: Number, default: 1 }, // Cantidad del producto en el carrito
+            size : String
+
         }
     ]
 });
