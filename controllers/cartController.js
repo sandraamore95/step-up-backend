@@ -26,7 +26,19 @@ console.log(item);
                 console.error('Producto incompleto:', item);
                 continue; // O manejar el error según sea necesario
             }
+            console.log(item);
 
+            // si hemos añadido una zapatillas ya existente en la BD con mismo Size , entonces hay que aumentar la quantity 
+
+
+
+
+
+            // si la zapatilla es la misma pero diferente size , entonces no se aumenta
+
+
+
+            cartItems.push(item);
             // Construir el objeto para el carrito
             const cartItem = {
                 products: cart.map(item => ({
@@ -35,12 +47,13 @@ console.log(item);
                     size: item.size
                 }))
             };
+           
             
-            console.log(cartItem);
+          
+      
         }
-
-        // Aquí puedes hacer algo con cartItems, como guardarlo en la base de datos
-        console.log('Items de carrito a guardar:', cartItems);
+  // Aquí puedes hacer algo con cartItems, como guardarlo en la base de datos
+  console.log('Items de carrito :', cartItems);
 
         // Ejemplo: guardar cartItems en MongoDB
         // await Cart.findOneAndUpdate({ user: userId }, { products: cartItems }, { upsert: true });
