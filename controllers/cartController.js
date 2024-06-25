@@ -8,6 +8,7 @@ const addToCart = async (req, res) => {
         const userId = req.user.id;
         const { cart } = req.body; // Obtén el arreglo de productos desde el cuerpo de la solicitud
 
+        console.log(cart);
         // Verifica si hay datos en cart
         if (!cart || !Array.isArray(cart) || cart.length === 0) {
             return res.status(400).json({ success: false, message: 'No se han proporcionado productos válidos.' });
@@ -19,7 +20,7 @@ const addToCart = async (req, res) => {
         // Iterar sobre cada producto en el carrito
         for (const item of cart) {
             const { product, quantity, size } = item;
-
+console.log(item);
             // Verificar si el producto tiene todos los campos necesarios
             if (!product || !quantity || !size) {
                 console.error('Producto incompleto:', item);
