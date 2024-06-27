@@ -2,68 +2,99 @@ const mongoose = require('mongoose');
 const Cart = require("../models/CartSchema");
 const Shoe = require('../models/Shoe');
 
-
 const addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { cart } = req.body; // Obtén el arreglo de productos desde el cuerpo de la solicitud
+        const { cart } = req.body;
 
-        console.log(cart);
-        // Verifica si hay datos en cart
+        // Verificar si hay datos en cart
         if (!cart || !Array.isArray(cart) || cart.length === 0) {
             return res.status(400).json({ success: false, message: 'No se han proporcionado productos válidos.' });
         }
 
-        // Crear un arreglo para almacenar los objetos del carrito
-        const cartItems = [];
+        // Buscar o crear el carrito del usuario
+        let userCart = await findOrCreateUserCart(userId);
 
-        // Iterar sobre cada producto en el carrito
-        for (const item of cart) {
+        // Procesar cada producto en el carrito
+        await Promise.all(cart.map(async (item) => {
             const { product, quantity, size } = item;
-            console.log(item);
-            // Verificar si el producto tiene todos los campos necesarios
-            if (!product || !quantity || !size) {
-                console.error('Producto incompleto:', item);
-                continue; // O manejar el error según sea necesario
+
+            // Verificar y obtener detalles del producto
+            const productDetails = await findProductDetails(product);
+
+            // Si no se encuentra el producto, manejar el error
+            if (!productDetails) {
+                console.error('Producto no encontrado:', product);
+                return;
             }
-            console.log(item);
 
-            // si hemos añadido una zapatillas ya existente en la BD con mismo Size , entonces hay que aumentar la quantity 
+            // Actualizar o agregar producto al carrito
+            await updateOrAddCartItem(userCart, productDetails, quantity, size);
+        }));
 
+        // Guardar el carrito actualizado en la base de datos
+        await userCart.save();
 
+        // Responder con el carrito actualizado
+        const populatedCart = (await userCart.populate('products.product'));
+        res.status(200).json({ success: true, cart: populatedCart });
 
-
-
-            // si la zapatilla es la misma pero diferente size , entonces no se aumenta
-
-
-
-            cartItems.push(item);
-            // Construir el objeto para el carrito
-            const cartItem = {
-                products: cart.map(item => ({
-                    product: item.product._id, // Aquí asumimos que item.product._id es el ID del producto en MongoDB
-                    quantity: item.quantity,
-                    size: item.size
-                }))
-            };
-           
-            
-          
-      
-        }
-  // Aquí puedes hacer algo con cartItems, como guardarlo en la base de datos
-  console.log('Items de carrito :', cartItems);
-
-        // Ejemplo: guardar cartItems en MongoDB
-        // await Cart.findOneAndUpdate({ user: userId }, { products: cartItems }, { upsert: true });
-
-        res.status(200).json({ success: true, message: 'Productos agregados al carrito correctamente.' });
     } catch (error) {
         console.error('Error al procesar la solicitud:', error);
         res.status(500).json({ success: false, message: 'Error al procesar la solicitud.' });
     }
 };
+
+
+// Función para buscar o crear el carrito del usuario
+const findOrCreateUserCart = async (userId) => {
+    let userCart = await Cart.findOne({ user: userId }).populate('products.product');
+    if (!userCart) {
+        console.log("No tiene carrito. Creando uno nuevo.");
+        userCart = new Cart({ user: userId, products: [] });
+    }
+    return userCart;
+};
+
+// Función para buscar detalles del producto por ID
+const findProductDetails = async (productId) => {
+    try {
+        const productDetails = await Shoe.findById(productId);
+        return productDetails;
+    } catch (error) {
+        console.error('Error al buscar detalles del producto:', error);
+        return null;
+    }
+};
+
+// Función para actualizar o agregar un elemento al carrito
+const updateOrAddCartItem = async (userCart, productDetails, quantity, size) => {
+    const existingProductIndex = userCart.products.findIndex(cartItem =>
+        cartItem.product._id.toString() === productDetails._id.toString() && cartItem.size === size
+    );
+
+    if (existingProductIndex >= 0) {
+        console.log("El producto ya está en el carrito con la misma talla, aumentamos su cantidad");
+        // Si el producto ya está en el carrito, aumentar la cantidad
+        userCart.products[existingProductIndex].quantity += quantity;
+    } else {
+        // Si el producto no está en el carrito, agregarlo
+        const cartItem = {
+            product: productDetails._id,
+            quantity: quantity,
+            size: size
+        };
+        userCart.products.push(cartItem);
+    }
+};
+
+
+
+
+
+
+
+
 
 /*
 
