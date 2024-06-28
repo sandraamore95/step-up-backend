@@ -46,6 +46,59 @@ const addToCart = async (req, res) => {
 };
 
 
+const updateCartItem = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { product } = req.body.data;
+        console.log(product.quantity);
+
+        // Si la cantidad es 0, eliminamos el producto por completo
+        if (product.quantity === 0) {
+            console.log(product.quantity);
+            /*
+    
+      await Cart.findOneAndUpdate(
+              { user: userId },
+              { $pull: { items: { product: product.product, size: product.size } } },
+              { new: true }
+            );
+    
+            */
+
+        } else {
+            console.log("hay mas de 0 ");
+            console.log(product.quantity);
+            // Actualizamos la cantidad en el carrito del usuario
+            /*
+    
+     await Cart.findOneAndUpdate(
+              { user: userId, 'items.product': product.product, 'items.size': product.size },
+              { $set: { 'items.$.quantity': product.quantity } },
+              { new: true }
+            );
+    
+            */
+
+        }
+
+        res.status(200).json({ message: 'Cart item updated' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error updating cart item' });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
 // Función para buscar o crear el carrito del usuario
 const findOrCreateUserCart = async (userId) => {
     let userCart = await Cart.findOne({ user: userId }).populate('products.product');
@@ -157,5 +210,5 @@ const getCart = async (req, res) => {
 }
 
 module.exports = {
-    addToCart, getCart
+    addToCart, getCart, updateCartItem,
 }
