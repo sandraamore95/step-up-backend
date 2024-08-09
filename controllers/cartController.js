@@ -54,18 +54,23 @@ const updateCartItem = async (req, res) => {
 
         // Si la cantidad es 0, eliminamos el producto por completo
         if (product.quantity === 0) {
+            console.log("el producto se va a eliminar por completo");
             console.log(product.quantity);
-            /*
-    
-      await Cart.findOneAndUpdate(
-              { user: userId },
-              { $pull: { items: { product: product.product, size: product.size } } },
-              { new: true }
-            );
-    
-            */
+            console.log(product.product._id);
+            const prodId=product.product._id;
+            try {
+                await Cart.findOneAndUpdate(
+                    { user: userId },
+                    { $pull: { products: { product: prodId, size: product.size } } },
+                    { new: true } // Esto devuelve el documento actualizado
+                );
 
-        } else {
+            }
+            catch (error) {
+                console.error('Error al eliminar el producto del carrito:', error);
+            }
+        }
+        else {
             console.log("hay mas de 0 ");
             console.log(product.quantity);
             // Actualizamos la cantidad en el carrito del usuario
