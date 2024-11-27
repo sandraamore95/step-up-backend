@@ -46,62 +46,90 @@ const addToCart = async (req, res) => {
 };
 
 
-const updateCartItem = async (req, res) => {
+const manageCartItem = async (req, res) => {
     try {
+        console.log("UPDATE O DELETEAR");
         const userId = req.user.id;
         const { product } = req.body.data;
-        console.log(product.quantity);
 
-        // Si la cantidad es 0, eliminamos el producto por completo
+        // Si la cantidad es 0, eliminamos el producto
         if (product.quantity === 0) {
-            console.log("el producto se va a eliminar por completo");
+            console.log("El producto se va a eliminar");
+            await Cart.findOneAndUpdate(
+                { user: userId },
+                { $pull: { products: { product: product.product._id, size: product.size } } },
+                { new: true }
+            );
+        } else {
+            // Si la cantidad es diferente de 0, actualizamos la cantidad del producto
+            console.log("Actualizando la cantidad del producto");
             console.log(product.quantity);
-            console.log(product.product._id);
-            const prodId=product.product._id;
+            console.log(product.size);
             try {
-                await Cart.findOneAndUpdate(
-                    { user: userId },
-                    { $pull: { products: { product: prodId, size: product.size } } },
-                    { new: true } // Esto devuelve el documento actualizado
+                // Buscar si el producto con el nuevo tamaño ya existe en el carrito
+                const cart = await Cart.findOne({ user: userId });
+
+                const existingProduct = cart.products.find(
+                    (item) => item.product.toString() === product.product._id.toString() && item.size === product.size
                 );
 
-            }
-            catch (error) {
-                console.error('Error al eliminar el producto del carrito:', error);
+                if (existingProduct) {
+                    // Si el producto con el mismo tamaño ya existe, simplemente aumentamos la cantidad
+                    console.log("Producto encontrado con el mismo tamaño, aumentando cantidad.");
+                    existingProduct.quantity += product.quantity;
+
+                    // Guardamos el carrito actualizado
+                    await cart.save();
+                    console.log("Carrito actualizado con nueva cantidad.");
+                } else {
+                    // Si el producto no existe con el tamaño, lo agregamos al carrito
+                    console.log("Producto con el tamaño no encontrado, añadiendo nuevo producto.");
+
+                    // Crear un nuevo objeto de producto para agregar al carrito
+                    cart.products.push({
+                        product: product.product._id,
+                        size: String(product.size),
+                        quantity: product.quantity,
+                    });
+
+                    // Guardamos el carrito con el nuevo producto
+                    await cart.save();
+                    console.log("Carrito actualizado con el nuevo producto.");
+                }
+            } catch (error) {
+                console.error("Error actualizando el carrito:", error);
             }
         }
-        else {
-            console.log("hay mas de 0 ");
-            console.log(product.quantity);
-            // Actualizamos la cantidad en el carrito del usuario
-            /*
-    
-     await Cart.findOneAndUpdate(
-              { user: userId, 'items.product': product.product, 'items.size': product.size },
-              { $set: { 'items.$.quantity': product.quantity } },
-              { new: true }
-            );
-    
-            */
-
-        }
-
-        res.status(200).json({ message: 'Cart item updated' });
     } catch (error) {
-        console.error(error);
+        console.error("Error en manageCartItem:", error);
         res.status(500).json({ message: 'Error updating cart item' });
     }
 };
 
 
+// Función para actualizar o agregar un elemento al carrito
+const updateOrAddCartItem = async (userCart, productDetails, quantity, size) => {
+    console.log("estamos aqui para update o deletear ");
+    const existingProductIndex = userCart.products.findIndex(cartItem =>
+        cartItem.product._id.toString() === productDetails._id.toString() && cartItem.size === size
+    );
 
-
-
-
-
-
-
-
+    if (existingProductIndex >= 0) {
+        console.log("El producto ya está en el carrito con la misma talla, aumentamos su cantidad");
+        // Si el producto ya está en el carrito, aumentar la cantidad
+        userCart.products[existingProductIndex].quantity += quantity;
+    } else {
+        console.log("El producto no tiene la misma talla");
+        // Si el producto no está en el carrito, agregarlo
+        const cartItem = {
+            product: productDetails._id,
+            quantity: quantity,
+            size: size
+        };
+        userCart.products.push(cartItem);
+        console.log(userCart);
+    }
+};
 
 
 // Función para buscar o crear el carrito del usuario
@@ -125,75 +153,6 @@ const findProductDetails = async (productId) => {
     }
 };
 
-// Función para actualizar o agregar un elemento al carrito
-const updateOrAddCartItem = async (userCart, productDetails, quantity, size) => {
-    const existingProductIndex = userCart.products.findIndex(cartItem =>
-        cartItem.product._id.toString() === productDetails._id.toString() && cartItem.size === size
-    );
-
-    if (existingProductIndex >= 0) {
-        console.log("El producto ya está en el carrito con la misma talla, aumentamos su cantidad");
-        // Si el producto ya está en el carrito, aumentar la cantidad
-        userCart.products[existingProductIndex].quantity += quantity;
-    } else {
-        // Si el producto no está en el carrito, agregarlo
-        const cartItem = {
-            product: productDetails._id,
-            quantity: quantity,
-            size: size
-        };
-        userCart.products.push(cartItem);
-    }
-};
-
-
-
-
-
-
-
-
-
-/*
-
- // Asegurar que el zapato exista
-        const shoe = await Shoe.findById(shoeId);
-        if (!shoe) {
-            return res.status(404).json({ success: false, message: "Zapato no encontrado." });
-        }
-        console.log("el zapato existe ", shoeId);
- // Buscar o crear carrito
-        let cart = await Cart.findOne({ user: userId });
-        if (!cart) {
-            console.log("no existe el cart ");
-            cart = new Cart({
-                user: userId,
-                products: [{ product: shoeId, quantity }]
-            });
-        } else {
-            // Buscar el producto en el carrito
-             const productIndex = cart.products.findIndex(item => item.product.equals(shoe.id));
-            if (productIndex >= 0) {
-                // Incrementar la cantidad si el producto ya está en el carrito
-                cart.products[productIndex].quantity += quantity;
-            } else {
-                // Añadir el producto al carrito si no está
-                cart.products.push({ product: shoeId, quantity });
-            }
-        }
-        await cart.save();
-
-
-*/
-
-
-
-
-
-
-
-
-
 
 
 const getCart = async (req, res) => {
@@ -215,5 +174,5 @@ const getCart = async (req, res) => {
 }
 
 module.exports = {
-    addToCart, getCart, updateCartItem,
+    addToCart, getCart, manageCartItem,
 }
